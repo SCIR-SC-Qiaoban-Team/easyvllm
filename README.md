@@ -2,11 +2,11 @@
   easyvllm
 </h1>
 <h3 align="center">
-Easy to use lightweight vllm tool with special support for Large Reasoning Model(LRM).
+  Easy to use lightweight vllm tool with special support for Large Reasoning Model (LRM).
 </h3>
 
 <p align="center">
-| <a href="#documentation"><b>Documentation</b></a> | <a href=""><b>Paper</b></a> |
+| <a href="#documentation"><b>Documentation</b></a> | <a href=""><b>Paper</b></a> | <a href="http://www.apache.org/licenses/LICENSE-2.0"><b>Apache License 2.0</b></a> |
 </p>
 
 ## Features
