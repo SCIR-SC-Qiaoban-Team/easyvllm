@@ -199,6 +199,8 @@ For more details on available parameters, refer to the [decode multask parameter
   - `chat_template (str, optional)`: Path to a chat template file for initializing the vLLM model. Defaults to `None`.  
   - `use_ray (bool, optional)`: Enable distributed inference across multiple nodes using **Ray**. Requires a Ray cluster to be created first. Defaults to `False`.  
   - `ray_host_ip (str, optional)`: Host IP address of the running Ray cluster. Required when `use_ray=True`. Defaults to `None`.  
+  - `enforce_eager (bool, optional)`: Set `--enforce-eager` for vllm. Defaults to `False`.
+  - `gpu_memory_utilization (float, optional)`: The `--gpu-memory-utilization` value of vllm. Defaults to `0.95`.
 
 
 #### parallel_chat
@@ -333,6 +335,8 @@ For more details on available parameters, refer to the [decode multask parameter
   - `--overwrite`: Whether to overwrite existing fields in input file  
   - `--use_ray`: Enable distributed inference across multiple nodes using **Ray**. Requires a Ray cluster to be created first. (default: false)  
   - `--ray_host_ip`: Host IP address of the running Ray cluster. Required when `use_ray=True`.
+  - `--enforce_eager`: Set `--enforce-eager` for vllm. (default: false)  
+  - `--gpu_memory_utilization`: The `--gpu-memory-utilization` value of vllm. (default: 0.95)  
 
 > Note: Set multiple `query_keys` for multi-round generation. If `response_keys`, `reasoning_keys` or/and `force_reasoning_content_keys` specified, they must have same length with `query_keys`. `force_reasoning_content_keys` must be specified when set `decode_type` to `query_force_reasoning_content`.
 
@@ -355,6 +359,8 @@ For more details on available parameters, refer to the [decode multask parameter
   - `--device_ids`: Specify GPU devices (comma-separated for multiple devices)  
   - `--use_ray`: Enable distributed inference across multiple nodes using **Ray**. Requires a Ray cluster to be created first. (default: false)  
   - `--ray_host_ip`: Host IP address of the running Ray cluster. Required when `use_ray=True`.
+  - `--enforce_eager`: Set `--enforce-eager` for vllm. (default: false)  
+  - `--gpu_memory_utilization`: The `--gpu-memory-utilization` value of vllm. (default: 0.95) 
 
 #### Task YAML Configuration
 

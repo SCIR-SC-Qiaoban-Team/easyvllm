@@ -94,39 +94,42 @@ def decode_query_force_reasoning_content(model: InferenceModel, query_list: Unio
 SUPPROT_DECODE_TYPE = ['query', 'query_reasoning_ctrl', 'query_force_reasoning_content']
     
 def decode(
-        model_path: str,
-        file_path: str,
-        decode_type: Literal['query', 'query_reasoning_ctrl', 'query_force_reasoning_content'],
-        save_path: str,
-        query_keys: Union[str, tuple[str]],
-        response_keys: Union[str, tuple[str]] = None,
-        reasoning_keys: Union[str, tuple[str]] = None,
-        tensor_parallel_size: int = 1,
-        pipeline_parallel_size: int = 1,
-        model_num: int = None,
-        port: int = 50000,
-        max_model_len: int = None,
-        show_vllm_log: bool = True,
-        openai_timeout: int = 30,
-        threads: int=20,
-        enable_reasoning: bool = False,
-        reasoning_parser: str = 'deepseek_r1',
-        system_prompt_file: str = None,
-        chat_template_file: str = None,
-        max_new_tokens = 8192,
-        device_ids: str = None,
-        reasoning_max_retry: int = 10,
-        add_reasoning_prompt: bool = False,
-        enable_length_ctrl: bool = False,
-        reasoning_max_len: int = None,
-        reasoning_min_len: int = 0,
-        reasoning_scale: float = None,
-        cut_by_sentence: bool = False,
-        force_reasoning_content_keys: Union[str, tuple[str]] = None,
-        overwrite: bool = False,
-        use_ray: bool = False,
-        ray_host_ip: str = None,
+    model_path: str,
+    file_path: str,
+    decode_type: Literal['query', 'query_reasoning_ctrl', 'query_force_reasoning_content'],
+    save_path: str,
+    query_keys: Union[str, tuple[str]],
+    response_keys: Union[str, tuple[str]] = None,
+    reasoning_keys: Union[str, tuple[str]] = None,
+    tensor_parallel_size: int = 1,
+    pipeline_parallel_size: int = 1,
+    model_num: int = None,
+    port: int = 50000,
+    max_model_len: int = None,
+    show_vllm_log: bool = True,
+    openai_timeout: int = 30,
+    threads: int=20,
+    enable_reasoning: bool = False,
+    reasoning_parser: str = 'deepseek_r1',
+    system_prompt_file: str = None,
+    chat_template_file: str = None,
+    max_new_tokens = 8192,
+    device_ids: str = None,
+    reasoning_max_retry: int = 10,
+    add_reasoning_prompt: bool = False,
+    enable_length_ctrl: bool = False,
+    reasoning_max_len: int = None,
+    reasoning_min_len: int = 0,
+    reasoning_scale: float = None,
+    cut_by_sentence: bool = False,
+    force_reasoning_content_keys: Union[str, tuple[str]] = None,
+    overwrite: bool = False,
+    use_ray: bool = False,
+    ray_host_ip: str = None,
+    enforce_eager: bool = False,
+    gpu_memory_utilization: float = 0.95,
 ):
+    
     if decode_type not in SUPPROT_DECODE_TYPE:
         raise ValueError(f"unsupport decode_type: '{decode_type}', support types: {SUPPROT_DECODE_TYPE}")
     if decode_type in ['query', 'query_reasoning_ctrl', 'query_force_reasoning_content'] and not query_keys:
@@ -169,6 +172,8 @@ def decode(
         chat_template=chat_template_file,
         use_ray=use_ray,
         ray_host_ip=ray_host_ip,
+        enforce_eager=enforce_eager,
+        gpu_memory_utilization=gpu_memory_utilization,
     )
 
     if decode_type in ['query', 'query_reasoning_ctrl', 'query_force_reasoning_content']:
@@ -269,6 +274,8 @@ def decode_multi_task(
     device_ids: str = None,
     use_ray: bool = False,
     ray_host_ip: str = None,
+    enforce_eager: bool = False,
+    gpu_memory_utilization: float = 0.95,
 ):
 
     config_list: list[TaskConfig] = load_config_list(tasks_yaml_path)
@@ -304,6 +311,8 @@ def decode_multi_task(
         chat_template=chat_template_file,
         use_ray=use_ray,
         ray_host_ip=ray_host_ip,
+        enforce_eager=enforce_eager,
+        gpu_memory_utilization=gpu_memory_utilization,
     )
 
     for task_i, config in enumerate(config_list):

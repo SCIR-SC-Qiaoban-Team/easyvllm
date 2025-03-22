@@ -99,6 +99,8 @@ class InferenceModel:
         chat_template: str = None,
         use_ray: bool = False,
         ray_host_ip: str = None,
+        enforce_eager: bool = False,
+        gpu_memory_utilization: float = 0.95,
     ):
         """Fast inference model implemented with vllm, support large reasoning model (LRM).
 
@@ -116,6 +118,8 @@ class InferenceModel:
             chat_template (str, optional): chat template file to init vllm model. Defaults to None.
             use_ray (bool, optional): Set True if using multiple nodes. Please create ray cluster first. Defaults to False.
             ray_host_ip (str, optional): The ray host ip of running ray cluster, required when use_ray. Defaults to None.
+            enforce_eager (bool, optional): Set `--enforce-eager` for vllm. Defaults to False.
+            gpu_memory_utilization (float, optional): The `--gpu-memory-utilization` value of vllm. Defaults to 0.95.
         """
         self.model_process = []
         self.sub_pid = set()
@@ -132,6 +136,11 @@ class InferenceModel:
         self.show_vllm_log = show_vllm_log
         self.openai_timeout = openai_timeout
         self.chat_template = chat_template
+        self.enforce_eager = enforce_eager
+
+        if gpu_memory_utilization < 0 or gpu_memory_utilization > 1:
+            raise ValueError("gpu_memory_utilization must greater than 0 less than 1")
+        self.gpu_memory_utilization = gpu_memory_utilization
         
         self.enable_reasoning = enable_reasoning
         if enable_reasoning and reasoning_parser is None:
@@ -185,12 +194,13 @@ class InferenceModel:
         cmd += f'--port {self.port + device_ids[0]} '
         cmd += f'--api-key abc '
         cmd += f'--max-model-len {self.max_model_len} ' if self.max_model_len else ''
-        cmd += f'--gpu-memory-utilization 0.95 '
+        cmd += f'--gpu-memory-utilization {self.gpu_memory_utilization} '
         cmd += f'--tensor-parallel-size {self.tensor_parallel_size} '
         cmd += f'--pipeline-parallel-size {self.pipeline_parallel_size} '
         cmd += f'--enable-reasoning --reasoning-parser {self.reasoning_parser} ' if self.enable_reasoning else ''
         cmd += f'--chat-template {self.chat_template} ' if self.chat_template else ''
         cmd += f'--distributed-executor-backend ray ' if self.use_ray else ''
+        cmd += f'--enforce-eager ' if self.enforce_eager else ''
         
         process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         self.model_process.append(process)
@@ -205,8 +215,8 @@ class InferenceModel:
                 print(out, end='')
                 
             if 'Starting vLLM API server' in out:
+                time.sleep(10)
                 print(f'Success loaded model in {device_ids}!')
-                time.sleep(5)
                 
                 client = OpenAI(
                     base_url=f"http://localhost:{self.port + device_ids[0]}/v1",
