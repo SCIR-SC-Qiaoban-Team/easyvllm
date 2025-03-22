@@ -39,6 +39,7 @@ REQUIRED = [
     'fire',
     'pandas',
     'openai',
+    'ray[serve]'
 ]
 
 # What packages are optional?

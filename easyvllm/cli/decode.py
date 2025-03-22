@@ -102,6 +102,7 @@ def decode(
         response_keys: Union[str, tuple[str]] = None,
         reasoning_keys: Union[str, tuple[str]] = None,
         tensor_parallel_size: int = 1,
+        pipeline_parallel_size: int = 1,
         model_num: int = None,
         port: int = 50000,
         max_model_len: int = None,
@@ -123,6 +124,8 @@ def decode(
         cut_by_sentence: bool = False,
         force_reasoning_content_keys: Union[str, tuple[str]] = None,
         overwrite: bool = False,
+        use_ray: bool = False,
+        ray_host_ip: str = None,
 ):
     if decode_type not in SUPPROT_DECODE_TYPE:
         raise ValueError(f"unsupport decode_type: '{decode_type}', support types: {SUPPROT_DECODE_TYPE}")
@@ -152,7 +155,21 @@ def decode(
         if not model_num:
             model_num = torch.cuda.device_count() // tensor_parallel_size
         device_ids = list(range(min(torch.cuda.device_count(), model_num * tensor_parallel_size)))
-    model = InferenceModel(model_path=model_path, device_ids=device_ids, tensor_parallel_size=tensor_parallel_size, port=port, max_model_len=max_model_len, show_vllm_log=show_vllm_log, openai_timeout=openai_timeout, enable_reasoning=enable_reasoning, reasoning_parser=reasoning_parser, chat_template=chat_template_file)
+    model = InferenceModel(
+        model_path=model_path,
+        device_ids=device_ids,
+        tensor_parallel_size=tensor_parallel_size,
+        pipeline_parallel_size=pipeline_parallel_size,
+        port=port,
+        max_model_len=max_model_len,
+        show_vllm_log=show_vllm_log,
+        openai_timeout=openai_timeout,
+        enable_reasoning=enable_reasoning,
+        reasoning_parser=reasoning_parser,
+        chat_template=chat_template_file,
+        use_ray=use_ray,
+        ray_host_ip=ray_host_ip,
+    )
 
     if decode_type in ['query', 'query_reasoning_ctrl', 'query_force_reasoning_content']:
         query_keys = [query_keys] if type(query_keys) != tuple else list(query_keys)
@@ -240,6 +257,7 @@ def decode_multi_task(
     model_path: str,
     tasks_yaml_path: str,
     tensor_parallel_size: int = 1,
+    pipeline_parallel_size: int = 1,
     max_model_len: int = None,
     model_num: int = None,
     port: int = 50000,
@@ -248,7 +266,9 @@ def decode_multi_task(
     chat_template_file: str = None,
     reasoning_parser: str = 'deepseek_r1',
     show_vllm_log: bool = True,
-    device_ids: str = None
+    device_ids: str = None,
+    use_ray: bool = False,
+    ray_host_ip: str = None,
 ):
 
     config_list: list[TaskConfig] = load_config_list(tasks_yaml_path)
@@ -269,7 +289,22 @@ def decode_multi_task(
         if not model_num:
             model_num = torch.cuda.device_count() // tensor_parallel_size
         device_ids = list(range(min(torch.cuda.device_count(), model_num * tensor_parallel_size)))
-    model = InferenceModel(model_path=model_path, device_ids=device_ids, tensor_parallel_size=tensor_parallel_size, port=port, max_model_len=max_model_len, show_vllm_log=show_vllm_log, openai_timeout=openai_timeout, enable_reasoning=enable_reasoning, reasoning_parser=reasoning_parser, chat_template=chat_template_file)
+    
+    model = InferenceModel(
+        model_path=model_path,
+        device_ids=device_ids,
+        tensor_parallel_size=tensor_parallel_size,
+        pipeline_parallel_size=pipeline_parallel_size,
+        port=port,
+        max_model_len=max_model_len,
+        show_vllm_log=show_vllm_log,
+        openai_timeout=openai_timeout,
+        enable_reasoning=enable_reasoning,
+        reasoning_parser=reasoning_parser,
+        chat_template=chat_template_file,
+        use_ray=use_ray,
+        ray_host_ip=ray_host_ip,
+    )
 
     for task_i, config in enumerate(config_list):
         print(f'Start task {task_i}')
@@ -338,8 +373,3 @@ def decode_multi_task(
 
     print(f'Finished {len(config_list)} tasks!!')
 
-
-def test(
-        model_path: str,):
-    print(model_path)
-    print(type(model_path))

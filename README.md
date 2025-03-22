@@ -98,7 +98,7 @@ We support following reasoning parsers now:
 - `openthinker`
 - `simplescaling`
 
-The `deepseek_r1` parser is implemented by vllm, along with its support for parsing `QWQ` inference output. The rest of the parser is in `./easyvllm/parsers` and needs to be [added to the vllm arser path](#add-reasoning-parsers-to-vllm) to be used.
+The `deepseek_r1` parser is implemented by vllm and supports parsing QWQ inference outputs. The remaining parsers are located in the `./easyvllm/parsers` directory and need to be [added to the vLLM parser path](#add-reasoning-parsers-to-vllm) to be utilized.
 
 Once initialized, you can use the following methods for inference:
 
@@ -309,6 +309,7 @@ For more details on available parameters, refer to the [decode multask parameter
   - `--response_keys`: Specify response save fields (comma-separated)  
   - `--reasoning_keys`: Reasoning save fields (for reasoning mode, comma-separated)  
   - `--tensor_parallel_size`: Tensor parallelism size for the model (default: 1)  
+  - `--pipeline_parallel_size`: Pipeline parallelism size for the model (default: 1)  
   - `--model_num`: Number of models loaded simultaneously
   - `--port`: Server listening port (default: 50000)
   - `--max_model_len`: max_model_len of vllm model  
@@ -330,6 +331,8 @@ For more details on available parameters, refer to the [decode multask parameter
   - `--cut_by_sentence`: Whether to split reasoning by sentence  
   - `--force_reasoning_content_keys`: Fields for enforcing reasoning content (comma-separated)  
   - `--overwrite`: Whether to overwrite existing fields in input file  
+  - `--use_ray`: Enable distributed inference across multiple nodes using **Ray**. Requires a Ray cluster to be created first. (default: false)  
+  - `--ray_host_ip`: Host IP address of the running Ray cluster. Required when `use_ray=True`.
 
 > Note: Set multiple `query_keys` for multi-round generation. If `response_keys`, `reasoning_keys` or/and `force_reasoning_content_keys` specified, they must have same length with `query_keys`. `force_reasoning_content_keys` must be specified when set `decode_type` to `query_force_reasoning_content`.
 
@@ -340,6 +343,7 @@ For more details on available parameters, refer to the [decode multask parameter
   - `--tasks_yaml_path`: Path to a YAML configuration file specifying multiple inference tasks  
 - Optional Parameters  
   - `--tensor_parallel_size`: Tensor parallelism size for the model (default: 1)  
+  - `--pipeline_parallel_size`: Pipeline parallelism size for the model (default: 1)  
   - `--max_model_len`: Maximum input length  
   - `--model_num`: Number of models loaded simultaneously  
   - `--port`: Server listening port (default: 50000)  
@@ -349,6 +353,8 @@ For more details on available parameters, refer to the [decode multask parameter
   - `--reasoning_parser`: Reasoning parser (default: `deepseek_r1`)  
   - `--show_vllm_log`: Whether to display vLLM logs (default: enabled)  
   - `--device_ids`: Specify GPU devices (comma-separated for multiple devices)  
+  - `--use_ray`: Enable distributed inference across multiple nodes using **Ray**. Requires a Ray cluster to be created first. (default: false)  
+  - `--ray_host_ip`: Host IP address of the running Ray cluster. Required when `use_ray=True`.
 
 #### Task YAML Configuration
 
