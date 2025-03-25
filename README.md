@@ -6,7 +6,7 @@
 </h3>
 
 <p align="center">
-| <a href="#documentation"><b>Documentation</b></a> | <a href=""><b>Paper</b></a> | <a href="http://www.apache.org/licenses/LICENSE-2.0"><b>Apache License 2.0</b></a> |
+  | <a href="#documentation"><b>Documentation</b></a> | <a href="https://arxiv.org/pdf/2503.17979"><b>Paper</b></a> | <a href="https://github.com/SCIR-SC-Qiaoban-Team"><b>Team Page</b></a> | <a href="http://www.apache.org/licenses/LICENSE-2.0"><b>Apache License 2.0</b></a> |
 </p>
 
 ## Features
